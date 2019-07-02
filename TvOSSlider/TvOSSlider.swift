@@ -21,6 +21,7 @@ private let defaultTrackColor: UIColor = .gray
 private let defaultMininumTrackTintColor: UIColor = .blue
 private let defaultFocusScaleFactor: CGFloat = 1.05
 private let defaultStepValue: Float = 0.1
+private let defaultScrollRatio: Float = 5.0
 private let decelerationRate: Float = 0.92
 private let decelerationMaxVelocity: Float = 1000
 private let fineTunningVelocityThreshold: Float = 600
@@ -100,6 +101,9 @@ public final class TvOSSlider: UIControl {
     
     /// Value added or subtracted from the current value on steps left or right updates
     public var stepValue: Float = defaultStepValue
+    
+    /// Actual translation value will be divided with scroll ratio to simulate scroll precision/sensitivity
+    public var scrollRatio: Float = defaultScrollRatio
     
     /**
      Sets the slider’s current value, allowing you to animate the change visually.
@@ -463,7 +467,7 @@ public final class TvOSSlider: UIControl {
             stopDeceleratingTimer()
             thumbViewCenterXConstraintConstant = Float(thumbViewCenterXConstraint.constant)
         case .changed:
-            let centerX = thumbViewCenterXConstraintConstant + translation / 5
+            let centerX = thumbViewCenterXConstraintConstant + translation / scrollRatio
             let percent = centerX / Float(trackView.frame.width)
             value = minimumValue + ((maximumValue - minimumValue) * percent)
             if isContinuous {
